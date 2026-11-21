@@ -11,7 +11,10 @@ const view = new Uint8Array(VW * VH * 3);
 
 let s0 = 20261121;
 function pick() {
-  s0 = (Math.imul(s0, 48271) + 11) % 2147483647;
+  // Lehmer step kept strictly positive: a signed overflow here once made
+  // negative alphas that wrapped the pixel buffer into neon green.
+  s0 = Math.abs((Math.imul(s0, 48271) + 11) % 2147483647);
+  if (s0 === 0) s0 = 987654321;
   return s0 / 2147483647;
 }
 function paint(x, y, c, a) {
